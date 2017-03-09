@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.List;
 
 public class TransmitReceiver extends BroadcastReceiver {
+
+    private static final String TAG = "TransmitReceiver";
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
@@ -28,7 +30,7 @@ public class TransmitReceiver extends BroadcastReceiver {
                 String message = msg.getDisplayMessageBody();
                 message = "短信助手自动转发\n来自："+number+"\n时间："+receiveTime+"\n内容："+message;
 
-                Log.i("",message);
+                Log.i(TAG,message);
                 String transmitNunmber = MainActivity.getSettingNote(context,"number");
                 if (transmitNunmber.equals("")){//第一次安装软件时，在没有设置转发号码的时候不转发
 
