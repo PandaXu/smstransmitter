@@ -28,4 +28,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile 'com.afollestad.material-dialogs:core:0.9.4.1'
+
+    compile 'com.github.hotchemi:permissionsdispatcher:2.3.2'
+    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.3.2'
 }
