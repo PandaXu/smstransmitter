@@ -46,7 +46,6 @@ public class TransmitReceiver extends BroadcastReceiver {
                 transmitMessageTo(context,transmitNunmber, message);
 
                 Log.i(TAG,message);
-                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
             }
         }
     }

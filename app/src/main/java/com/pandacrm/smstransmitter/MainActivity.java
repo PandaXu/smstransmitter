@@ -31,11 +31,13 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         number = (TextView) findViewById(R.id.number);
 
+        String receiverPhone = getSettingNote(this,"number");
+
         setPhoneDialog = new MaterialDialog.Builder(this)
                 .title(R.string.input_set_receiver_phone)
                 .content(R.string.input_set_receiver_tip)
                 .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_NUMBER)
-                .input("", "", new MaterialDialog.InputCallback() {
+                .input(receiverPhone, receiverPhone, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
                         if(input.toString().length()==11){
@@ -47,9 +49,6 @@ public class MainActivity extends Activity {
                         }
                     }
                 }).build();
-        setPhoneDialog.getTitleView().setGravity(Gravity.CENTER);
-
-        String receiverPhone = getSettingNote(this,"number");
 
         if("".equals(receiverPhone)){
             number.setText("00000000000");
