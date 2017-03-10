@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">短信助手</string>
+    <string name="input_set_receiver_phone">设置短信接收手机号码</string>
+    <string name="input_set_receiver_tip">本手机的短信将自动转发到您输入的手机号</string>
 </resources>

@@ -6,114 +6,64 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import static android.R.attr.button;
 
 public class MainActivity extends Activity {
-    private final int CONTINUE = 3;//继续输入
-    private final int CHANGE = 0;//修改号码
-    private final int SAVE = 1;//保存号码
-    private final int INPUT = 2;//输入号码
-    private Button button;
-    private EditText number;
-    private int state;
+
+    private TextView number;
+    private MaterialDialog setPhoneDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        number = (TextView) findViewById(R.id.number);
 
-        button = (Button) findViewById(R.id.button);
-        number = (EditText) findViewById(R.id.number);
-        boolean flag = getSettingNote(this,"number").equals("");//判断是否为第一次进入软件
-
-        if(flag){
-            state = INPUT;
-            buttonState(state);
-        }else {
-            state = CHANGE;
-            buttonState(state);
-        }
-
-        number.setText(getSettingNote(this,"number"));//显示已经保存了的号码
-        number.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                int count = s.length();
-                Log.i("MainActivity",count+"");
-                if(count > 0 && count <11){
-                    state = CONTINUE;
-                    buttonState(state);
-                }else if (count == 11){
-                    state = SAVE;
-                    buttonState(state);
-                }else {
-                    button.setEnabled(false);
-                }
-                if (getSettingNote(MainActivity.this,"number").equals(s.toString())){
-                    state = CHANGE;
-                    buttonState(state);
-                }
-            }
-        });
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String numberStr = number.getText().toString();
-                if(numberStr.length() == 11){
-                    if (getSettingNote(MainActivity.this,"number").equals(numberStr)){
-                        number.setText("");
-                        state = INPUT;
-                        buttonState(state);
-                    }else {
-                        saveSettingNote(MainActivity.this,"number",numberStr);
-                        state = CHANGE;
-                        buttonState(state);
-                        Toast.makeText(MainActivity.this,"保存号码成功！",Toast.LENGTH_SHORT).show();
+        setPhoneDialog = new MaterialDialog.Builder(this)
+                .title(R.string.input_set_receiver_phone)
+                .content(R.string.input_set_receiver_tip)
+                .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_NUMBER)
+                .input("", "", new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        if(input.toString().length()==11){
+                            Toast.makeText(MainActivity.this,"号码设置成功:"+input.toString(),Toast.LENGTH_SHORT).show();
+                            saveSettingNote(MainActivity.this,"number",input.toString());
+                            number.setText(getSettingNote(MainActivity.this,"number"));
+                        }else{
+                            Toast.makeText(MainActivity.this,"号码输入有误",Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else{
-                    Toast.makeText(MainActivity.this,"输入号码有误，请重新输入！", Toast.LENGTH_SHORT).show();
-                }
+                }).build();
+        setPhoneDialog.getTitleView().setGravity(Gravity.CENTER);
+
+        String receiverPhone = getSettingNote(this,"number");
+
+        if("".equals(receiverPhone)){
+            number.setText("00000000000");
+            setPhoneDialog.show();
+        }
+
+        number.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                setPhoneDialog.show();
             }
         });
-    }
-    private void buttonState(int state){
-        switch (state){
-            case INPUT:
-                number.setText("");
-                button.setText("输入号码");
-                button.setEnabled(false);
-                break;
-            case SAVE:
-                button.setText("保存号码");
-                button.setEnabled(true);
-                break;
-            case CHANGE:
-                button.setText("修改号码");
-                button.setEnabled(true);
-                break;
-            case CONTINUE:
-                button.setText("继续输入");
-                button.setEnabled(false);
-                break;
-        }
+
+
     }
 
     public static void saveSettingNote(Context context, String key, String saveData){//保存设置
